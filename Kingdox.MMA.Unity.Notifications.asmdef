@@ -1,0 +1,16 @@
+{
+    "name": "MMA.Unity.Notifications",
+    "references": [
+        "GUID:802cda87e14734b9bb05c37c9cd64a18",
+        "GUID:ac145e6b8c6034cdbadc8c6e26aedbcf"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
