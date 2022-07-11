@@ -11,8 +11,8 @@ namespace MMA.Unity_Notifications
     {
         // public const string _   = KeyData._;
         public static string Initialize = "Unity_Notification_Initialize";
-        public static string AddChannel = "Unity_Notification_AddChannel";
-        public static string AddNotification = "Unity_Notification_AddNotification";
+        public static string SetChannel = "Unity_Notification_SetChannel";
+        public static string SetNotification = "Unity_Notification_SetNotification";
         public static string SendNotification = "Unity_Notification_SendNotification";
     }
     public static class Import
@@ -36,10 +36,10 @@ namespace MMA.Unity_Notifications
             Middleware<bool>.Subscribe_Publish(condition, Key.Initialize, Initialize);
 
             // AddChannel
-            Middleware<(string id, string title, string description, int importance)>.Subscribe_Publish(condition, Key.AddChannel, AddChannel);
+            Middleware<(string id, string title, string description, int importance)>.Subscribe_Publish(condition, Key.SetChannel, SetChannel);
 
             // AddNotification
-            Middleware<(string id, string title, string text, DateTime delay, TimeSpan repeatInterval)>.Subscribe_Publish(condition, Key.AddNotification, AddNotification);
+            Middleware<(string id, string title, string text, DateTime delay, TimeSpan repeatInterval)>.Subscribe_Publish(condition, Key.SetNotification, SetNotification);
 
             // SendNotification
             Middleware<string>.Subscribe_Publish(condition, Key.SendNotification, SendNotification);
@@ -49,13 +49,23 @@ namespace MMA.Unity_Notifications
         // Contenedor de toda la logica del Unity_Notifications
         private bool Initialize() => AndroidNotificationCenter.Initialize();
 
-        private void AddChannel((string id, string title, string description, int importance) data)
+        private void SetChannel((string id, string title, string description, int importance) data)
         {
-            dic_notificationChannel.Add(data.id, new AndroidNotificationChannel(data.id, data.title, data.description, (Importance)data.importance));
+            if (dic_notificationChannel.ContainsKey(data.id)){
+                dic_notificationChannel[data.id] = new AndroidNotificationChannel(data.id, data.title, data.description, (Importance)data.importance);
+            }
+            else
+            {
+                dic_notificationChannel.Add(data.id, new AndroidNotificationChannel(data.id, data.title, data.description, (Importance)data.importance));
+            }
             AndroidNotificationCenter.RegisterNotificationChannel(dic_notificationChannel[data.id]);
         }
 
-        private void AddNotification((string id, string title, string text, DateTime delay, TimeSpan repeatInterval) data) => dic_notification.Add(data.id, new AndroidNotification(data.title, data.text, data.delay, data.repeatInterval));
+        private void SetNotification((string id, string title, string text, DateTime delay, TimeSpan repeatInterval) data)
+        {
+            if (dic_notification.ContainsKey(data.id))  dic_notification[data.id] = new AndroidNotification(data.title, data.text, data.delay, data.repeatInterval);
+            else dic_notification.Add(data.id, new AndroidNotification(data.title, data.text, data.delay, data.repeatInterval));
+        }
 
         private void SendNotification(string id) => AndroidNotificationCenter.SendNotification(dic_notification[id], id);
         #endregion
