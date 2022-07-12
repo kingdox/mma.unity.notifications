@@ -48,7 +48,10 @@ namespace MMA.Unity_Notifications
         #endregion
         #region Methods
         // Contenedor de toda la logica del Unity_Notifications
-        private bool Initialize() => AndroidNotificationCenter.Initialize();
+        private bool Initialize()
+        {
+            return AndroidNotificationCenter.Initialize();
+        }
 
         private void SetChannel((string id, string title, string description, int importance) data)
         {
@@ -59,6 +62,7 @@ namespace MMA.Unity_Notifications
             {
                 dic_notificationChannel.Add(data.id, new AndroidNotificationChannel(data.id, data.title, data.description, (Importance)data.importance));
             }
+            //AndroidNotificationCenter.DeleteNotificationChannel TODO
             AndroidNotificationCenter.RegisterNotificationChannel(dic_notificationChannel[data.id]);
         }
 
@@ -91,13 +95,13 @@ namespace MMA.Unity_Notifications
                 dic_notificationSheduled.Add(id, AndroidNotificationCenter.SendNotification(dic_notification[id], id));
             }
         }
-        #endregion
-        #region Request ( Coroutines )
+#endregion
+#region Request ( Coroutines )
         // Contenedor de toda la Esperas de corutinas del Unity_Notifications
-        #endregion
-        #region Task ( async )
+#endregion
+#region Task ( async )
         // Contenedor de toda la Esperas asincronas del Unity_Notifications
-        #endregion
+#endregion
     }
 }
 
