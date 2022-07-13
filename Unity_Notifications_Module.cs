@@ -40,7 +40,7 @@ namespace MMA.Unity_Notifications
             Middleware<(string id, string title, string description, int importance)>.Subscribe_Publish(condition, Key.SetChannel, SetChannel);
 
             // AddNotification
-            Middleware<(string id, string title, string text, DateTime delay, TimeSpan repeatInterval)>.Subscribe_Publish(condition, Key.SetNotification, SetNotification);
+            Middleware<(string id, string title, string text, DateTime delay, TimeSpan? repeatInterval)>.Subscribe_Publish(condition, Key.SetNotification, SetNotification);
 
             // SendNotification
             Middleware<string>.Subscribe_Publish(condition, Key.SendNotification, SendNotification);
@@ -66,10 +66,16 @@ namespace MMA.Unity_Notifications
             AndroidNotificationCenter.RegisterNotificationChannel(dic_notificationChannel[data.id]);
         }
 
-        private void SetNotification((string id, string title, string text, DateTime delay, TimeSpan repeatInterval) data)
+        private void SetNotification((string id, string title, string text, DateTime delay, TimeSpan? repeatInterval) data)
         {
-            if (dic_notification.ContainsKey(data.id))  dic_notification[data.id] = new AndroidNotification(data.title, data.text, data.delay, data.repeatInterval);
-            else dic_notification.Add(data.id, new AndroidNotification(data.title, data.text, data.delay, data.repeatInterval));
+            Debug.Log($"{nameof(SetNotification)} => {data}");
+
+            if (dic_notification.ContainsKey(data.id)) dic_notification[data.id] = new AndroidNotification(data.title, data.text, data.delay) {
+                RepeatInterval = data.repeatInterval
+            };
+            else dic_notification.Add(data.id, new AndroidNotification(data.title, data.text, data.delay) {
+                RepeatInterval = data.repeatInterval
+            });
         }
 
         private void SendNotification(string id)
